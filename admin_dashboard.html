@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 style="
+    text-align:center;
+    margin:25px;
+    font-size:28px;
+    color:cyan;
+">
+⚙️ Admin Dashboard
+</h1>
+
+<div style="
+    max-width:1000px;
+    margin:auto;
+    padding:20px;
+">
+
+    <!-- Add Book Button -->
+    <div style="text-align:right;margin-bottom:20px;">
+        <a href="/add_book" style="
+            padding:12px 20px;
+            border-radius:12px;
+            background:linear-gradient(135deg, cyan, #22d3ee);
+            color:black;
+            text-decoration:none;
+            font-weight:bold;
+        ">
+            ➕ Add New Book
+        </a>
+    </div>
+
+    <!-- Book List -->
+    {% for b in books %}
+    <div class="card" style="
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        margin-bottom:15px;
+        padding:15px;
+        gap:20px;
+    ">
+
+        <!-- Left -->
+        <div style="display:flex;align-items:center;gap:15px;">
+            <img src="{{b.image_url}}" style="
+                width:60px;
+                height:80px;
+                object-fit:cover;
+                border-radius:8px;
+            ">
+            <div>
+                <h3 style="margin:0;">{{b.title}}</h3>
+                <p style="margin:0;font-size:12px;opacity:0.7;">{{b.author}}</p>
+                <p style="margin:0;color:cyan;font-size:13px;">₹{{b.price}}</p>
+            </div>
+        </div>
+
+        <!-- Right Actions -->
+        <div style="display:flex;gap:10px;">
+            <a href="/edit_book/{{b.id}}" style="
+                padding:8px 14px;
+                border-radius:10px;
+                background:rgba(255,255,255,0.08);
+                text-decoration:none;
+                color:white;
+            ">
+                ✏️ Edit
+            </a>
+
+            <a href="/delete_book/{{b.id}}" style="
+                padding:8px 14px;
+                border-radius:10px;
+                background:#ef4444;
+                text-decoration:none;
+                color:white;
+            "
+            onclick="return confirm('Delete this book?')">
+                🗑 Delete
+            </a>
+        </div>
+
+    </div>
+    {% endfor %}
+
+    {% if books|length == 0 %}
+    <p style="text-align:center;opacity:0.6;margin-top:40px;">
+        No books found.
+    </p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

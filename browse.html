@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 style="
+    text-align:center;
+    margin:25px;
+    font-size:28px;
+    color:cyan;
+">
+📚 Browse Books
+</h1>
+
+<div class="grid">
+{% for b in books %}
+<div class="card" style="
+    position:relative;
+    overflow:hidden;
+">
+
+    <!-- Image -->
+    <div style="overflow:hidden;border-radius:12px;">
+        <img src="{{b.image_url}}"
+        style="transition:0.4s;"
+        onmouseover="this.style.transform='scale(1.1)'"
+        onmouseout="this.style.transform='scale(1)'">
+    </div>
+
+    <!-- Content -->
+    <h3 style="margin-top:10px;font-size:16px;">{{b.title}}</h3>
+    <p style="font-size:13px;opacity:0.7;">{{b.author}}</p>
+    <p style="color:cyan;font-weight:bold;">₹{{b.price}}</p>
+
+    <!-- Actions -->
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-top:10px;
+    ">
+        <button onclick="addToCart('{{b.id}}')">Add</button>
+
+        <a href="{{ url_for('product', book_id=b.id) }}" style="
+            font-size:13px;
+            padding:6px 10px;
+            border-radius:8px;
+            background:rgba(255,255,255,0.08);
+            text-decoration:none;
+            color:white;
+        ">
+            View
+        </a>
+    </div>
+
+</div>
+{% endfor %}
+</div>
+
+{% if books|length == 0 %}
+<p style="
+    text-align:center;
+    margin-top:40px;
+    opacity:0.6;
+">
+No books available 😔
+</p>
+{% endif %}
+
+<script>
+function addToCart(id){
+    fetch(`/add_to_cart/${id}`,{
+        method:"POST"
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        if(data.status==="success"){
+            showToast("✅ Added to Cart");
+        }
+    });
+}
+
+function showToast(msg){
+    let t=document.createElement("div");
+    t.innerText=msg;
+    t.style.position="fixed";
+    t.style.bottom="20px";
+    t.style.right="20px";
+    t.style.background="cyan";
+    t.style.color="black";
+    t.style.padding="12px 20px";
+    t.style.borderRadius="10px";
+    t.style.boxShadow="0 0 15px cyan";
+    document.body.appendChild(t);
+    setTimeout(()=>t.remove(),2000);
+}
+</script>
+
+{% endblock %}

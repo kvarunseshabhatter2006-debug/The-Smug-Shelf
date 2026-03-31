@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+
+/* ===== CONTAINER ===== */
+.checkout-container{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:30px;
+    max-width:1000px;
+    margin:auto;
+    padding:30px;
+}
+
+/* ===== LEFT BOX ===== */
+.checkout-box{
+    background:rgba(255,255,255,0.05);
+    padding:25px;
+    border-radius:20px;
+    backdrop-filter:blur(15px);
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+/* ===== CARD PREVIEW ===== */
+.card-preview{
+    background:linear-gradient(135deg,#020617,#0f172a);
+    color:white;
+    border-radius:20px;
+    padding:20px;
+    height:200px;
+    position:relative;
+    box-shadow:0 0 20px rgba(0,255,255,0.2);
+}
+
+.card-number{
+    font-size:20px;
+    letter-spacing:2px;
+    margin-top:40px;
+}
+
+.card-name{
+    position:absolute;
+    bottom:20px;
+    left:20px;
+}
+
+.card-expiry{
+    position:absolute;
+    bottom:20px;
+    right:20px;
+}
+
+/* ===== QR ===== */
+.qr-box{
+    display:none;
+    text-align:center;
+}
+
+.qr-box img{
+    width:200px;
+    border-radius:10px;
+}
+
+/* ===== INPUT ===== */
+input, select{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.1);
+    background:rgba(32, 209, 186, 0.05);
+    color:white;
+    outline:none;
+}
+
+/* ===== BUTTON ===== */
+.pay-btn{
+    width:100%;
+    padding:12px;
+    background:linear-gradient(135deg, cyan, #22d3ee);
+    color:black;
+    border:none;
+    border-radius:12px;
+    margin-top:15px;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.pay-btn:hover{
+    box-shadow:0 0 15px cyan;
+}
+
+/* ===== LOADER ===== */
+.loader{
+    display:none;
+    text-align:center;
+    margin-top:15px;
+}
+
+.loader div{
+    width:40px;
+    height:40px;
+    border:5px solid #ccc;
+    border-top:5px solid cyan;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin:auto;
+}
+
+
+@keyframes spin{
+    100%{transform:rotate(360deg);}
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+    .checkout-container{
+        grid-template-columns:1fr;
+    }
+}
+
+select {
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.1);
+    background:rgba(15,23,42,0.9); /* FIX: solid dark bg */
+    color:white;
+    outline:none;
+    appearance:none; /* removes default arrow */
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    cursor:pointer;
+}
+
+/* Custom dropdown arrow */
+select {
+    background-image: url("data:image/svg+xml;utf8,<svg fill='cyan' height='20' viewBox='0 0 20 20' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M5 7l5 5 5-5H5z'/></svg>");
+    background-repeat:no-repeat;
+    background-position:right 10px center;
+    background-size:18px;
+}
+
+/* OPTION FIX (important) */
+select option {
+    background:#020617;   /* FIX: no overlap */
+    color:white;
+}
+
+
+</style>
+
+<div class="checkout-container">
+
+<!-- LEFT SIDE -->
+<div class="checkout-box">
+
+<h2 style="color:cyan;">💳 Checkout</h2>
+
+<form id="paymentForm">
+
+<label>Payment Method</label>
+<select id="paymentMethod" required>
+    <option value="">Select</option>
+    <option value="UPI">UPI</option>
+    <option value="Card">Card</option>
+    <option value="COD">Cash on Delivery</option>
+</select>
+
+<div id="cardInputs">
+    <input type="text" id="cardNumber" placeholder="Card Number">
+    <input type="text" id="cardName" placeholder="Card Holder Name">
+    <input type="text" id="cardExpiry" placeholder="MM/YY">
+</div>
+
+<div id="upiInput" style="display:none;">
+    <input type="text" placeholder="Enter UPI ID">
+</div>
+
+<button class="pay-btn">Place Order</button>
+
+</form>
+
+<div class="loader" id="loader">
+    <div></div>
+    <p>Processing...</p>
+</div>
+
+</div>
+
+<!-- RIGHT SIDE -->
+<div>
+
+<div class="card-preview" id="cardPreview">
+    <div class="card-number" id="previewNumber">XXXX XXXX XXXX XXXX</div>
+    <div class="card-name" id="previewName">NAME</div>
+    <div class="card-expiry" id="previewExpiry">MM/YY</div>
+</div>
+
+<div class="qr-box" id="qrBox">
+    <h3>Scan & Pay</h3>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay">
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+// FIX: Proper element references
+const paymentMethod = document.getElementById("paymentMethod");
+const upiInput = document.getElementById("upiInput");
+const cardInputs = document.getElementById("cardInputs");
+const qrBox = document.getElementById("qrBox");
+const cardPreview = document.getElementById("cardPreview");
+
+const cardNumber = document.getElementById("cardNumber");
+const cardName = document.getElementById("cardName");
+const cardExpiry = document.getElementById("cardExpiry");
+
+const previewNumber = document.getElementById("previewNumber");
+const previewName = document.getElementById("previewName");
+const previewExpiry = document.getElementById("previewExpiry");
+
+const loader = document.getElementById("loader");
+const form = document.getElementById("paymentForm");
+
+// PAYMENT METHOD SWITCH
+paymentMethod.addEventListener("change", function(){
+
+    if(this.value === "UPI"){
+        upiInput.style.display="block";
+        cardInputs.style.display="none";
+        qrBox.style.display="block";
+        cardPreview.style.display="none";
+    }
+    else if(this.value === "Card"){
+        upiInput.style.display="none";
+        cardInputs.style.display="block";
+        qrBox.style.display="none";
+        cardPreview.style.display="block";
+    }
+    else{
+        upiInput.style.display="none";
+        cardInputs.style.display="none";
+        qrBox.style.display="none";
+        cardPreview.style.display="none";
+    }
+
+});
+
+// LIVE CARD PREVIEW
+cardNumber.addEventListener("input", () => {
+    previewNumber.innerText = cardNumber.value || "XXXX XXXX XXXX XXXX";
+});
+
+cardName.addEventListener("input", () => {
+    previewName.innerText = cardName.value || "NAME";
+});
+
+cardExpiry.addEventListener("input", () => {
+    previewExpiry.innerText = cardExpiry.value || "MM/YY";
+});
+
+// SUBMIT
+form.addEventListener("submit", function(e){
+    e.preventDefault();
+
+    loader.style.display="block";
+
+    setTimeout(()=>{
+        const method = paymentMethod.value;
+
+        if(method === "COD"){
+            window.location.href="/receipt?method=COD";
+        } else {
+            window.location.href="/receipt?method=ONLINE";
+        }
+    },1500);
+});
+
+</script>
+
+{% endblock %}

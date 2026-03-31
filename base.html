@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smug Shelf</title>
+
+<style>
+/* ===== GLOBAL ===== */
+body{
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    background:linear-gradient(135deg,#020617,#0f172a);
+    color:white;
+}
+
+/* ===== NAVBAR ===== */
+.nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 30px;
+    background:rgba(2,6,23,0.8);
+    backdrop-filter:blur(10px);
+    box-shadow:0 0 20px rgba(0,255,255,0.1);
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+.nav-left{
+    font-size:22px;
+    font-weight:bold;
+    letter-spacing:1px;
+    color:cyan;
+}
+
+.nav-right{
+    display:flex;
+    align-items:center;
+}
+
+.nav-right a{
+    color:white;
+    text-decoration:none;
+    margin:0 8px;
+    padding:8px 14px;
+    border-radius:10px;
+    transition:0.3s;
+    font-size:14px;
+}
+
+.nav-right a:hover{
+    background:cyan;
+    color:black;
+    box-shadow:0 0 12px cyan;
+}
+
+.user-badge{
+    background:rgba(255,255,255,0.1);
+    padding:6px 12px;
+    border-radius:10px;
+    margin-right:10px;
+    font-size:13px;
+}
+
+/* ===== CARDS ===== */
+.card{
+    background:rgba(255,255,255,0.05);
+    padding:15px;
+    border-radius:18px;
+    backdrop-filter:blur(15px);
+    transition:0.3s;
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+.card:hover{
+    transform:translateY(-5px) scale(1.03);
+    box-shadow:0 0 25px rgba(0,255,255,0.4);
+}
+
+/* ===== GRID ===== */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:25px;
+    padding:25px;
+}
+
+/* ===== IMAGE ===== */
+img{
+    width:100%;
+    height:260px;
+    object-fit:cover;
+    border-radius:12px;
+    transition:0.4s;
+}
+
+img:hover{
+    transform:scale(1.08);
+}
+
+/* ===== BUTTON ===== */
+button{
+    padding:10px 14px;
+    border:none;
+    background:linear-gradient(135deg,cyan,#22d3ee);
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+button:hover{
+    box-shadow:0 0 15px cyan;
+    transform:scale(1.05);
+}
+
+/* ===== HEADINGS ===== */
+h1,h2,h3{
+    margin:8px 0;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{
+    height:6px;
+}
+::-webkit-scrollbar-thumb{
+    background:cyan;
+    border-radius:10px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:600px){
+    .nav{
+        flex-direction:column;
+        gap:10px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="nav">
+    <div class="nav-left" style="display:flex;align-items:center;gap:10px;">
+
+    <img src="{{ url_for('static', filename='logo.jpg') }}" 
+    style="
+        height:40px;
+        width:auto;
+        border-radius:8px;
+        object-fit:cover;
+    ">
+
+    <span style="
+        font-size:20px;
+        font-weight:bold;
+        color:cyan;
+        letter-spacing:1px;
+    ">
+        The Smug Shelf
+    </span>
+
+</div>
+
+    <div class="nav-right">
+        <a href="/">Home</a>
+        <a href="/browse">Browse</a>
+        <a href="/cart">Cart</a>
+        <a href="/search">Search</a>
+
+        {% if session.get('user') %}
+            <span class="user-badge">👋 {{session['user']}}</span>
+
+            {% if session.get('user') == 'admin' %}
+                <a href="/admin">Admin</a>
+            {% endif %}
+
+            <a href="/logout">Logout</a>
+        {% else %}
+            <a href="/login">Login</a>
+            <a href="/signup">Signup</a>
+        {% endif %}
+    </div>
+</div>
+
+{% block content %}{% endblock %}
+
+</body>
+</html>

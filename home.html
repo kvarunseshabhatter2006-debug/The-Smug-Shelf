@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 style="text-align:center;margin:20px;">📚 Explore Categories</h1>
+
+{% for category, books in category_books.items() %}
+
+<h2 style="margin-left:20px;color:cyan;">{{category}}</h2>
+
+<div style="
+    display:flex;
+    overflow-x:auto;
+    gap:20px;
+    padding:20px;
+">
+
+    {% for b in books %}
+    <div class="card" style="min-width:200px;">
+
+        <div style="overflow:hidden;border-radius:10px;">
+            <img src="{{b.image_url}}"
+            style="transition:0.4s;"
+            onmouseover="this.style.transform='scale(1.1)'"
+            onmouseout="this.style.transform='scale(1)'">
+        </div>
+
+        <h3>{{b.title}}</h3>
+        <p style="opacity:0.7;">{{b.author}}</p>
+        <p style="color:cyan;">₹{{b.price}}</p>
+
+        <button onclick="addToCart('{{b.id}}')">Add</button>
+        <a href="{{ url_for('product', book_id=b.id) }}">View</a>
+
+    </div>
+    {% endfor %}
+
+</div>
+
+{% endfor %}
+
+<script>
+function addToCart(id){
+    fetch(`/add_to_cart/${id}`,{
+        method:"POST"
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        if(data.status==="success"){
+            showToast("✅ Added to Cart");
+        }
+    });
+}
+
+function showToast(msg){
+    let t=document.createElement("div");
+    t.innerText=msg;
+    t.style.position="fixed";
+    t.style.bottom="20px";
+    t.style.right="20px";
+    t.style.background="cyan";
+    t.style.color="black";
+    t.style.padding="10px 20px";
+    t.style.borderRadius="10px";
+    document.body.appendChild(t);
+    setTimeout(()=>t.remove(),2000);
+}
+</script>
+
+{% endblock %}

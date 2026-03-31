@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div style="
+    min-height:90vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+">
+
+    <!-- RECEIPT -->
+    <div class="card" id="receiptCard" style="
+        width:420px;
+        padding:30px;
+        text-align:left;
+        position:relative;
+        overflow:hidden;
+    ">
+
+        <h2 style="text-align:center;color:cyan;">🧾 Order Receipt</h2>
+
+        <p><strong>Order ID:</strong> <span id="orderId"></span></p>
+        <p><strong>Date:</strong> <span id="date"></span></p>
+        <p><strong>Payment:</strong> {{ request.args.get('method','ONLINE') }}</p>
+
+        <hr style="opacity:0.2;">
+
+        <div id="items"></div>
+
+        <hr style="opacity:0.2;">
+
+        <h3 style="text-align:right;">Total: ₹<span id="total"></span></h3>
+
+        <div style="display:flex;gap:10px;margin-top:20px;">
+            <button onclick="printReceipt()" style="flex:1;padding:10px;border-radius:10px;">
+                🖨 Print
+            </button>
+
+            <!-- FIXED BUTTON -->
+            <button onclick="showThankYou()" style="
+                flex:1;
+                padding:10px;
+                border-radius:10px;
+                background:linear-gradient(135deg, cyan, #22d3ee);
+                color:black;
+                font-weight:bold;
+            ">
+                Continue
+            </button>
+        </div>
+
+    </div>
+
+    <!-- THANK YOU SCREEN -->
+    <div class="card" id="thankYouCard" style="
+        display:none;
+        width:400px;
+        padding:40px;
+        text-align:center;
+    ">
+
+        <div style="font-size:60px;">🎉</div>
+
+        <h2 style="color:cyan;margin-top:10px;">
+            Thank You for Your Order!
+        </h2>
+
+        <p style="opacity:0.7;margin-top:10px;">
+            Your order has been placed successfully.
+        </p>
+
+    </div>
+
+</div>
+
+<script>
+
+// RANDOM DATA
+function randomId(){
+    return "ORD" + Math.floor(Math.random()*1000000);
+}
+
+document.getElementById("orderId").innerText = randomId();
+document.getElementById("date").innerText = new Date().toLocaleString();
+
+let items = [
+    {name:"Atomic Habits", price:499},
+    {name:"Deep Work", price:450}
+];
+
+let total = 0;
+let itemsDiv = document.getElementById("items");
+
+items.forEach(i=>{
+    total += i.price;
+    let row = document.createElement("div");
+    row.style.display="flex";
+    row.style.justifyContent="space-between";
+    row.innerHTML = `<span>${i.name}</span><span>₹${i.price}</span>`;
+    itemsDiv.appendChild(row);
+});
+
+document.getElementById("total").innerText = total;
+
+// PRINT
+function printReceipt(){
+    window.print();
+}
+
+// THANK YOU FLOW
+function showThankYou(){
+
+    document.getElementById("receiptCard").style.display = "none";
+    document.getElementById("thankYouCard").style.display = "block";
+
+    setTimeout(()=>{
+        window.location.href = "/";
+    }, 2000); // redirect after 2 sec
+}
+
+</script>
+
+{% endblock %}

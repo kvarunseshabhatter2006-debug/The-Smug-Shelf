@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 style="
+    text-align:center;
+    margin:25px;
+    font-size:28px;
+    color:cyan;
+">
+🛒 Your Cart
+</h1>
+
+<div style="max-width:900px;margin:auto;padding:10px;">
+
+{% if items|length > 0 %}
+
+    {% for i in items %}
+    <div class="card" style="
+        display:flex;
+        gap:20px;
+        align-items:center;
+        margin-bottom:20px;
+        padding:15px;
+    ">
+
+        <!-- Image -->
+        <img src="{{i.image_url}}" style="
+            width:100px;
+            height:140px;
+            object-fit:cover;
+            border-radius:10px;
+        ">
+
+        <!-- Details -->
+        <div style="flex:1;">
+            <h3 style="margin-bottom:5px;">{{i.title}}</h3>
+            <p style="opacity:0.7;font-size:13px;">{{i.author}}</p>
+
+            <p style="margin-top:10px;">
+                Qty: 
+                <button onclick="updateQty('{{i.id}}', -1)">➖</button>
+                <span style="margin:0 10px;">{{i.qty}}</span>
+                <button onclick="updateQty('{{i.id}}', 1)">➕</button>
+            </p>
+
+            <p style="color:cyan;font-weight:bold;">
+                ₹{{i.subtotal}}
+            </p>
+        </div>
+
+        <!-- Remove -->
+        <button onclick="removeItem('{{i.id}}')" style="
+            background:#ef4444;
+            color:white;
+        ">
+            ❌ Remove
+        </button>
+
+    </div>
+    {% endfor %}
+
+    <!-- Total -->
+    <div style="
+        text-align:right;
+        margin-top:20px;
+        font-size:20px;
+        font-weight:bold;
+    ">
+        Total: <span style="color:cyan;">₹{{total}}</span>
+    </div>
+
+    <!-- Checkout -->
+    <div style="text-align:right;margin-top:20px;">
+        <a href="/checkout" style="
+            padding:12px 25px;
+            border-radius:12px;
+            background:linear-gradient(135deg, cyan, #22d3ee);
+            color:black;
+            text-decoration:none;
+            font-weight:bold;
+        ">
+            Proceed to Checkout →
+        </a>
+    </div>
+
+{% else %}
+
+    <div style="
+        text-align:center;
+        margin-top:100px;
+        opacity:0.7;
+    ">
+        <h2>Your cart is empty 😔</h2>
+        <a href="/browse" style="color:cyan;">Browse Books</a>
+    </div>
+
+{% endif %}
+
+</div>
+
+<script>
+let cart = {{ session.get('cart', {}) | tojson | safe }};
+
+function updateQty(id, change){
+    if(!cart[id]) return;
+
+    cart[id] += change;
+
+    if(cart[id] <= 0){
+        delete cart[id];
+    }
+
+    saveCart();
+}
+
+function removeItem(id){
+    delete cart[id];
+    saveCart();
+}
+
+function saveCart(){
+    fetch("/update_cart", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify(cart)
+    })
+    .then(()=>location.reload());
+}
+</script>
+
+{% endblock %}

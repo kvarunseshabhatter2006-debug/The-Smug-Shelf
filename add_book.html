@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 style="text-align:center;margin:20px;">➕ Add New Book</h1>
+
+<div style="display:flex;justify-content:center;">
+<form method="POST" class="card" style="width:400px;">
+
+    <label>Title</label>
+    <input name="title" placeholder="Enter title" required
+    style="width:100%;padding:10px;margin:10px 0;border-radius:8px;">
+
+    <label>Author</label>
+    <input name="author" placeholder="Enter author" required
+    style="width:100%;padding:10px;margin:10px 0;border-radius:8px;">
+
+    <label>Category</label>
+    <select name="category" required
+    style="width:100%;padding:10px;margin:10px 0;border-radius:8px;">
+        <option value="">Select Category</option>
+        <option>Fiction</option>
+        <option>Finance</option>
+        <option>Self Help</option>
+        <option>Programming</option>
+        <option>Productivity</option>
+    </select>
+
+    <label>Price</label>
+    <input name="price" type="number" step="0.01" placeholder="Enter price" required
+    style="width:100%;padding:10px;margin:10px 0;border-radius:8px;">
+
+    <label>Stock</label>
+    <input name="stock" type="number" placeholder="Enter stock" required
+    style="width:100%;padding:10px;margin:10px 0;border-radius:8px;">
+
+    <label>Image URL</label>
+    <input name="image_url" placeholder="Paste image URL" required
+    style="width:100%;padding:10px;margin:10px 0;border-radius:8px;">
+
+    <label>Description</label>
+    <textarea name="description" rows="4" placeholder="Enter description"
+    style="width:100%;padding:10px;margin:10px 0;border-radius:8px;"></textarea>
+
+    <button style="width:100%;margin-top:10px;">Add Book</button>
+
+</form>
+</div>
+
+{% endblock %}

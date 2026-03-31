@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- 🔍 SEARCH BAR -->
+<form method="get" action="/search" class="search-wrapper">
+    <div class="search-box">
+        <input 
+            type="text" 
+            name="query" 
+            placeholder="🔍 Search books..."
+            value="{{ query if query else '' }}"
+            class="search-input"
+        >
+        <button type="submit" class="search-btn">Search</button>
+    </div>
+</form>
+
+<!-- 🔎 SEARCH TITLE -->
+<h1 style="text-align:center;margin:10px;font-size:26px;color:cyan;">
+Search Results
+</h1>
+
+{% if query %}
+<p style="text-align:center;opacity:0.6;margin-bottom:20px;">
+Results for <span style="color:cyan;">"{{ query }}"</span>
+</p>
+{% endif %}
+
+<!-- 📚 BOOK GRID -->
+<div class="grid">
+{% for b in books %}
+<div class="card">
+
+    <!-- IMAGE -->
+    <div class="img-box">
+        <img src="{{ b.image_url or 'https://via.placeholder.com/150' }}">
+    </div>
+
+    <!-- DETAILS -->
+    <h3>{{ b.title }}</h3>
+    <p class="author">{{ b.author }}</p>
+    <p class="price">₹{{ b.price }}</p>
+
+    <!-- ACTIONS -->
+    <div class="actions">
+        <button onclick="addToCart('{{ b.id }}')">Add</button>
+        <a href="{{ url_for('product', book_id=b.id) }}">View</a>
+    </div>
+
+</div>
+{% endfor %}
+</div>
+
+<!-- ❌ NO RESULTS -->
+{% if books|length == 0 %}
+<p class="no-results">No books found 😔</p>
+{% endif %}
+
+<!-- ⚡ JS -->
+<script>
+function addToCart(id){
+    fetch(`/add_to_cart/${id}`, {
+        method: "POST"
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === "success"){
+            showToast("✅ Added to Cart");
+        }
+    });
+}
+
+function showToast(msg){
+    let t = document.createElement("div");
+    t.innerText = msg;
+    t.className = "toast";
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2000);
+}
+
+// autofocus search
+document.addEventListener("DOMContentLoaded", ()=>{
+    document.querySelector(".search-input").focus();
+});
+</script>
+
+<!-- 🎨 STYLE -->
+<style>
+
+/* SEARCH */
+.search-wrapper{
+    display:flex;
+    justify-content:center;
+    margin:25px 0;
+}
+
+.search-box{
+    display:flex;
+    width:60%;
+    max-width:500px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(12px);
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 0 15px rgba(0,255,255,0.2);
+    transition:0.3s;
+}
+
+.search-box:focus-within{
+    box-shadow:0 0 20px cyan;
+    transform:scale(1.02);
+}
+
+.search-input{
+    flex:1;
+    padding:12px;
+    border:none;
+    outline:none;
+    background:transparent;
+    color:white;
+}
+
+.search-btn{
+    padding:12px 20px;
+    border:none;
+    background:cyan;
+    color:black;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.search-btn:hover{
+    background:#00e6e6;
+}
+
+/* GRID */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:20px;
+    padding:20px;
+}
+
+/* CARD */
+.card{
+    background:rgba(255,255,255,0.05);
+    padding:15px;
+    border-radius:12px;
+    backdrop-filter:blur(10px);
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 0 20px cyan;
+}
+
+/* IMAGE */
+.img-box{
+    overflow:hidden;
+    border-radius:10px;
+}
+
+.img-box img{
+    width:100%;
+    transition:0.4s;
+}
+
+.img-box img:hover{
+    transform:scale(1.1);
+}
+
+/* TEXT */
+.author{
+    font-size:13px;
+    opacity:0.7;
+}
+
+.price{
+    color:cyan;
+    font-weight:bold;
+}
+
+/* ACTIONS */
+.actions{
+    display:flex;
+    justify-content:space-between;
+    margin-top:10px;
+}
+
+.actions button{
+    padding:6px 12px;
+    border:none;
+    border-radius:8px;
+    background:cyan;
+    color:black;
+    cursor:pointer;
+}
+
+.actions a{
+    text-decoration:none;
+    font-size:13px;
+    padding:6px 10px;
+    border-radius:8px;
+    background:rgba(255,255,255,0.1);
+    color:white;
+}
+
+/* NO RESULTS */
+.no-results{
+    text-align:center;
+    margin-top:40px;
+    opacity:0.6;
+}
+
+/* TOAST */
+.toast{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:cyan;
+    color:black;
+    padding:12px 20px;
+    border-radius:10px;
+    box-shadow:0 0 15px cyan;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+    .search-box{
+        width:90%;
+    }
+}
+
+</style>
+
+{% endblock %}

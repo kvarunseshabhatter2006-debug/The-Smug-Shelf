@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div style="
+    min-height:90vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+">
+
+    <form method="POST" class="card" style="
+        width:380px;
+        padding:30px;
+        text-align:center;
+        position:relative;
+        overflow:hidden;
+    ">
+
+        <!-- Glow Background -->
+        <div style="
+            position:absolute;
+            width:300px;
+            height:300px;
+            background:radial-gradient(circle, rgba(0,255,255,0.2), transparent);
+            top:-100px;
+            right:-100px;
+            filter:blur(40px);
+        "></div>
+
+        <h2 style="
+            margin-bottom:20px;
+            font-size:26px;
+            letter-spacing:1px;
+            color:cyan;
+        ">
+            Welcome Back
+        </h2>
+
+        <!-- Username -->
+        <div style="text-align:left;margin-bottom:15px;">
+            <label style="font-size:13px;opacity:0.7;">Username</label>
+            <input name="username" placeholder="Enter username" required
+            style="
+                width:100%;
+                padding:12px;
+                margin-top:5px;
+                border-radius:10px;
+                border:1px solid rgba(255,255,255,0.1);
+                background:rgba(255,255,255,0.05);
+                color:white;
+                outline:none;
+                transition:0.3s;
+            "
+            onfocus="this.style.border='1px solid cyan';this.style.boxShadow='0 0 10px cyan'"
+            onblur="this.style.border='1px solid rgba(255,255,255,0.1)';this.style.boxShadow='none'">
+        </div>
+
+        <!-- Password -->
+        <div style="text-align:left;margin-bottom:20px;">
+            <label style="font-size:13px;opacity:0.7;">Password</label>
+            <input name="password" type="password" placeholder="Enter password" required
+            style="
+                width:100%;
+                padding:12px;
+                margin-top:5px;
+                border-radius:10px;
+                border:1px solid rgba(255,255,255,0.1);
+                background:rgba(255,255,255,0.05);
+                color:white;
+                outline:none;
+                transition:0.3s;
+            "
+            onfocus="this.style.border='1px solid cyan';this.style.boxShadow='0 0 10px cyan'"
+            onblur="this.style.border='1px solid rgba(255,255,255,0.1)';this.style.boxShadow='none'">
+        </div>
+
+        <!-- Button -->
+        <button style="
+            width:100%;
+            padding:12px;
+            font-size:15px;
+            font-weight:bold;
+            border-radius:12px;
+            background:linear-gradient(135deg, cyan, #22d3ee);
+            transition:0.3s;
+        "
+        onmouseover="this.style.boxShadow='0 0 20px cyan';this.style.transform='scale(1.03)'"
+        onmouseout="this.style.boxShadow='none';this.style.transform='scale(1)'">
+            Login
+        </button>
+
+        <!-- Footer -->
+        <p style="margin-top:20px;font-size:13px;opacity:0.7;">
+            Don’t have an account?
+            <a href="/signup" style="color:cyan;text-decoration:none;">Signup</a>
+        </p>
+
+    </form>
+
+</div>
+
+{% endblock %}
